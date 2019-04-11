@@ -188,6 +188,7 @@ public final class LexerEngine {
      */
     public void unsupportedIfEqual(final TokenType... tokenTypes) {
         if (equalAny(tokenTypes)) {
+            System.out.println("SQLParsingEngine: {}"+lexer.getCurrentToken().getClass().getSimpleName());
             log("SQLParsingEngine: {}",lexer.getCurrentToken().getClass().getSimpleName());
             throw new SQLParsingUnsupportedException(lexer.getCurrentToken().getType());
         }
