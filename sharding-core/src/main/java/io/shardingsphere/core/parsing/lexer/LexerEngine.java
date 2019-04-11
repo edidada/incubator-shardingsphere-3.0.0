@@ -32,8 +32,10 @@ import io.shardingsphere.core.parsing.parser.exception.SQLParsingException;
 import io.shardingsphere.core.parsing.parser.exception.SQLParsingUnsupportedException;
 import io.shardingsphere.core.parsing.parser.sql.SQLStatement;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Set;
+import static jdk.nashorn.internal.objects.NativeMath.log;
 
 /**
  * Lexical analysis engine.
@@ -41,6 +43,7 @@ import java.util.Set;
  * @author zhangliang
  */
 @RequiredArgsConstructor
+@Slf4j(topic = "developer-debug")
 public final class LexerEngine {
     
     private final Lexer lexer;
@@ -185,6 +188,7 @@ public final class LexerEngine {
      */
     public void unsupportedIfEqual(final TokenType... tokenTypes) {
         if (equalAny(tokenTypes)) {
+            log("SQLParsingEngine: {}",lexer.getCurrentToken().getClass().getSimpleName());
             throw new SQLParsingUnsupportedException(lexer.getCurrentToken().getType());
         }
     }
