@@ -27,6 +27,9 @@ import io.shardingsphere.core.parsing.parser.sql.SQLParserFactory;
 import io.shardingsphere.core.parsing.parser.sql.SQLStatement;
 import io.shardingsphere.core.rule.ShardingRule;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+import static jdk.nashorn.internal.objects.NativeMath.log;
 
 /**
  * SQL parsing engine.
@@ -34,6 +37,7 @@ import lombok.RequiredArgsConstructor;
  * @author zhangliang
  */
 @RequiredArgsConstructor
+@Slf4j(topic = "developer-debug")
 public final class SQLParsingEngine {
     
     private final DatabaseType dbType;
@@ -61,6 +65,7 @@ public final class SQLParsingEngine {
         if (useCache) {
             ParsingResultCache.getInstance().put(sql, result);
         }
+        log("SQLParsingEngine: {}", result.getClass().getSimpleName());
         return result;
     }
     
