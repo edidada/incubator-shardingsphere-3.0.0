@@ -1,1 +1,1 @@
-mvn install -Dmaven.test.skip=true
+mvn install -Dmaven.test.skip=true -Dmaven.javadoc.skip=true -Dcheckstyle.skip=true

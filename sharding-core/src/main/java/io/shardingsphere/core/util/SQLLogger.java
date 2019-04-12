@@ -46,6 +46,9 @@ public final class SQLLogger {
     public static void logSQL(final String logicSQL, final SQLStatement sqlStatement, final Collection<RouteUnit> routeUnits) {
         log("Rule Type: sharding");
         log("Logic SQL: {}", logicSQL);
+		if(logicSQL.contains("case typeId")){
+			log("Logic SQL: {}", logicSQL);
+		}
         log("SQLStatement: {}", sqlStatement);
         for (RouteUnit each : routeUnits) {
             if (each.getSqlUnit().getParameterSets().get(0).isEmpty()) {
