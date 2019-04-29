@@ -17,6 +17,7 @@
 
 package io.shardingsphere.core.routing.type.unicast;
 
+import io.shardingsphere.core.parsing.parser.sql.dql.select.SelectStatement;
 import io.shardingsphere.core.routing.type.RoutingEngine;
 import io.shardingsphere.core.routing.type.RoutingResult;
 import io.shardingsphere.core.routing.type.RoutingTable;
@@ -24,6 +25,7 @@ import io.shardingsphere.core.routing.type.TableUnit;
 import io.shardingsphere.core.rule.DataNode;
 import io.shardingsphere.core.rule.ShardingRule;
 import lombok.RequiredArgsConstructor;
+import io.shardingsphere.core.parsing.parser.sql.SQLStatement;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,12 +43,29 @@ public final class UnicastRoutingEngine implements RoutingEngine {
     private final ShardingRule shardingRule;
     
     private final Collection<String> logicTables;
-    
+	
+	private SQLStatement sqlStatement;
+
+    public UnicastRoutingEngine(ShardingRule shardingRule, Collection<String> logicTables, SQLStatement sqlStatement) {
+        this.shardingRule = shardingRule;
+        this.logicTables = logicTables;
+        this.sqlStatement = sqlStatement;
+    }
+	
     @Override
     public RoutingResult route() {
         RoutingResult result = new RoutingResult();
         if (logicTables.isEmpty()) {
-            result.getTableUnits().getTableUnits().add(new TableUnit(shardingRule.getShardingDataSourceNames().getDataSourceNames().iterator().next()));
+			//TODO: case when just add one, need to add some
+//            if(shardingRule.getSelectStatement())
+//			Collection<String> s = shardingRule.getShardingDataSourceNames().getDataSourceNames();
+            if(null != sqlStatement && sqlStatement instanceof SelectStatement && ((SelectStatement) sqlStatement).isContainCaseWhen()){
+                for(String name : shardingRule.getShardingDataSourceNames().getDataSourceNames()){
+                    result.getTableUnits().getTableUnits().add(new TableUnit(name));
+                }
+            } else {
+                result.getTableUnits().getTableUnits().add(new TableUnit(shardingRule.getShardingDataSourceNames().getDataSourceNames().iterator().next()));
+            }
         } else if (1 == logicTables.size()) {
             String logicTableName = logicTables.iterator().next();
             DataNode dataNode = shardingRule.findDataNode(logicTableName);

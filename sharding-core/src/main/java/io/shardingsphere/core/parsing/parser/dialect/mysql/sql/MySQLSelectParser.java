@@ -55,6 +55,7 @@ public final class MySQLSelectParser extends AbstractSelectParser {
         parseOrderBy(selectStatement);
         parseLimit(selectStatement);
         parseSelectRest();
+        parseCaseWhen(selectStatement);
     }
     
     private void parseSelectOption() {

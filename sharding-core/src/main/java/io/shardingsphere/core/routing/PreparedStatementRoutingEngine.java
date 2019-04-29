@@ -60,6 +60,9 @@ public final class PreparedStatementRoutingEngine {
      * @return route result
      */
     public SQLRouteResult route(final List<Object> parameters) {
+		if(logicSQL.contains("case typeId")){
+			System.out.println("case when parse");
+		}
         if (null == sqlStatement) {
             sqlStatement = shardingRouter.parse(logicSQL, true);
         }

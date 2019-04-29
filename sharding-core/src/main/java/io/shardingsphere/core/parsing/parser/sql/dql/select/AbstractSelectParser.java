@@ -116,6 +116,12 @@ public abstract class AbstractSelectParser implements SQLParser {
         selectClauseParserFacade.getGroupByClauseParser().parse(selectStatement);
     }
     
+    protected final void parseCaseWhen(final SelectStatement selectStatement) {
+        if(lexerEngine.getInput().contains("case")){
+            selectStatement.setContainCaseWhen(true);
+        }
+    }
+   
     protected final void parseHaving() {
         selectClauseParserFacade.getHavingClauseParser().parse();
     }

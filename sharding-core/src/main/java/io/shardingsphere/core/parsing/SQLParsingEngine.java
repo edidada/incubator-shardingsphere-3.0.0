@@ -28,6 +28,7 @@ import io.shardingsphere.core.parsing.parser.sql.SQLStatement;
 import io.shardingsphere.core.rule.ShardingRule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import io.shardingsphere.core.parsing.parser.sql.SQLParser;
 
 import static jdk.nashorn.internal.objects.NativeMath.log;
 
@@ -61,7 +62,8 @@ public final class SQLParsingEngine {
         }
         LexerEngine lexerEngine = LexerEngineFactory.newInstance(dbType, sql);
         lexerEngine.nextToken();
-        SQLStatement result = SQLParserFactory.newInstance(dbType, lexerEngine.getCurrentToken().getType(), shardingRule, lexerEngine, shardingTableMetaData).parse();
+        SQLParser sqlParser = SQLParserFactory.newInstance(dbType, lexerEngine.getCurrentToken().getType(), shardingRule, lexerEngine, shardingTableMetaData);
+		SQLStatement result = sqlParser.parse();
         if (useCache) {
             ParsingResultCache.getInstance().put(sql, result);
         }

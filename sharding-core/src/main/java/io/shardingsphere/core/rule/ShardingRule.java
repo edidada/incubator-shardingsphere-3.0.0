@@ -33,6 +33,7 @@ import io.shardingsphere.core.routing.strategy.ShardingStrategyFactory;
 import io.shardingsphere.core.routing.strategy.none.NoneShardingStrategy;
 import io.shardingsphere.core.util.StringUtil;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -46,6 +47,7 @@ import java.util.TreeSet;
  * @author maxiaoguang
  * @author panjuan
  */
+@ToString
 @Getter
 public class ShardingRule {
     

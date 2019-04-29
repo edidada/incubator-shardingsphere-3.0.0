@@ -88,7 +88,8 @@ public final class ParsingSQLRouter implements ShardingRouter {
     public SQLStatement parse(final String logicSQL, final boolean useCache) {
         parsingHook.start(logicSQL);
         try {
-            SQLStatement result = new SQLParsingEngine(databaseType, logicSQL, shardingRule, shardingTableMetaData).parse(useCache);
+            SQLParsingEngine sqlParsingEngine = new SQLParsingEngine(databaseType, logicSQL, shardingRule, shardingTableMetaData);
+			SQLStatement result = sqlParsingEngine.parse(useCache);
             parsingHook.finishSuccess();
             return result;
             // CHECKSTYLE:OFF
@@ -106,6 +107,13 @@ public final class ParsingSQLRouter implements ShardingRouter {
             generatedKey = getGenerateKey(shardingRule, (InsertStatement) sqlStatement, parameters);
         }
         SQLRouteResult result = new SQLRouteResult(sqlStatement, generatedKey);
+		if(logicSQL.contains("case typeId")){
+			if(result != null){
+				if(result.getRouteUnits() != null){
+					System.out.println(result.getRouteUnits().size());
+				}
+			}
+		}
         ShardingConditions shardingConditions = OptimizeEngineFactory.newInstance(shardingRule, sqlStatement, parameters, generatedKey).optimize();
         if (null != generatedKey) {
             setGeneratedKeys(result, generatedKey);
@@ -118,8 +126,18 @@ public final class ParsingSQLRouter implements ShardingRouter {
         }
         SQLBuilder sqlBuilder = rewriteEngine.rewrite(!isSingleRouting);
         for (TableUnit each : routingResult.getTableUnits().getTableUnits()) {
+			if(logicSQL.contains("case typeId")){
+				System.out.println(each.getDataSourceName());
+			}
             result.getRouteUnits().add(new RouteUnit(each.getDataSourceName(), rewriteEngine.generateSQL(each, sqlBuilder, shardingDataSourceMetaData)));
         }
+		if(logicSQL.contains("case typeId")){
+			if(result != null){
+				if(result.getRouteUnits() != null){
+					System.out.println(result.getRouteUnits().size());
+				}
+			}
+		}
         if (showSQL) {
             SQLLogger.logSQL(logicSQL, sqlStatement, result.getRouteUnits());
         }
@@ -142,7 +160,8 @@ public final class ParsingSQLRouter implements ShardingRouter {
         } else if (sqlStatement instanceof DALStatement) {
             routingEngine = new UnicastRoutingEngine(shardingRule, tableNames);
         } else if (tableNames.isEmpty() && sqlStatement instanceof SelectStatement) {
-            routingEngine = new UnicastRoutingEngine(shardingRule, tableNames);
+			//casewhen
+            routingEngine = new UnicastRoutingEngine(shardingRule, tableNames, sqlStatement);
         } else if (tableNames.isEmpty()) {
             routingEngine = new DatabaseBroadcastRoutingEngine(shardingRule);
         } else if (1 == tableNames.size() || shardingRule.isAllBindingTables(tableNames) || shardingRule.isAllInDefaultDataSource(tableNames)) {
